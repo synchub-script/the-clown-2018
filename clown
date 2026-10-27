@@ -1,0 +1,777 @@
+--[[
+    ═══════════════════════════════════════════
+         THE CLOWN 2018 — Universal Script
+              Created for entertainment
+    ═══════════════════════════════════════════
+]]
+
+--// Services
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local Lighting = game:GetService("Lighting")
+
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+--// Удаляем старую версию
+if game.CoreGui:FindFirstChild("TheClown2018") then
+    game.CoreGui.TheClown2018:Destroy()
+end
+
+--// ═══════════════ GUI ═══════════════
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "TheClown2018"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.DisplayOrder = 999
+ScreenGui.Parent = game.CoreGui
+
+--// Главный фрейм
+local Main = Instance.new("Frame")
+Main.Name = "Main"
+Main.Size = UDim2.new(0, 480, 0, 380)
+Main.Position = UDim2.new(0.5, -240, 0.5, -190)
+Main.BackgroundColor3 = Color3.fromRGB(18, 8, 30)
+Main.BackgroundTransparency = 0.05
+Main.BorderSizePixel = 0
+Main.ClipsDescendants = true
+Main.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 14)
+UICorner.Parent = Main
+
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Color = Color3.fromRGB(255, 60, 120)
+UIStroke.Thickness = 2
+UIStroke.Transparency = 0.2
+UIStroke.Parent = Main
+
+--// Градиент
+local Gradient = Instance.new("UIGradient")
+Gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(30, 10, 45)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(20, 5, 30)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(35, 8, 50)),
+}
+Gradient.Rotation = 45
+Gradient.Parent = Main
+
+--// ═══════════════ TOP BAR ═══════════════
+local TopBar = Instance.new("Frame")
+TopBar.Name = "TopBar"
+TopBar.Size = UDim2.new(1, 0, 0, 55)
+TopBar.BackgroundColor3 = Color3.fromRGB(25, 8, 40)
+TopBar.BackgroundTransparency = 0.2
+TopBar.BorderSizePixel = 0
+TopBar.Parent = Main
+
+local TopCorner = Instance.new("UICorner")
+TopCorner.CornerRadius = UDim.new(0, 14)
+TopCorner.Parent = TopBar
+
+-- Маска чтобы не было видно нижних углов
+local TopMask = Instance.new("Frame")
+TopMask.Size = UDim2.new(1, 0, 0, 20)
+TopMask.Position = UDim2.new(0, 0, 1, -20)
+TopMask.BackgroundColor3 = Color3.fromRGB(25, 8, 40)
+TopMask.BackgroundTransparency = 0.2
+TopMask.BorderSizePixel = 0
+TopMask.Parent = TopBar
+
+--// Заголовок
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Size = UDim2.new(1, -120, 1, 0)
+Title.Position = UDim2.new(0, 15, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "🎪 The Clown 2018"
+Title.TextColor3 = Color3.fromRGB(255, 90, 150)
+Title.TextSize = 22
+Title.Font = Enum.Font.GothamBlack
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = TopBar
+
+local TitleGradient = Instance.new("UIGradient")
+TitleGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 80, 140)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 150, 200)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 60, 255)),
+}
+TitleGradient.Parent = Title
+
+--// Кнопки сверху (Открыть/Закрыть + Close)
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Name = "ToggleBtn"
+ToggleBtn.Size = UDim2.new(0, 75, 0, 30)
+ToggleBtn.Position = UDim2.new(1, -140, 0.5, -15)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 120)
+ToggleBtn.BorderSizePixel = 0
+ToggleBtn.Text = "▼"
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.TextSize = 18
+ToggleBtn.Font = Enum.Font.GothamBold
+ToggleBtn.Parent = TopBar
+
+local ToggleCorner = Instance.new("UICorner")
+ToggleCorner.CornerRadius = UDim.new(0, 8)
+ToggleCorner.Parent = ToggleBtn
+
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Name = "CloseBtn"
+CloseBtn.Size = UDim2.new(0, 30, 0, 30)
+CloseBtn.Position = UDim2.new(1, -55, 0.5, -15)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 30, 60)
+CloseBtn.BorderSizePixel = 0
+CloseBtn.Text = "✕"
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.TextSize = 16
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.Parent = TopBar
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 8)
+CloseCorner.Parent = CloseBtn
+
+--// ═══════════════ SCROLLING FRAME ═══════════════
+local Scroll = Instance.new("ScrollingFrame")
+Scroll.Name = "Scroll"
+Scroll.Size = UDim2.new(1, -20, 1, -70)
+Scroll.Position = UDim2.new(0, 10, 0, 60)
+Scroll.BackgroundTransparency = 1
+Scroll.BorderSizePixel = 0
+Scroll.ScrollBarThickness = 4
+Scroll.ScrollBarImageColor3 = Color3.fromRGB(255, 60, 120)
+Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+Scroll.Parent = Main
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 8)
+UIListLayout.Parent = Scroll
+
+local UIPadding = Instance.new("UIPadding")
+UIPadding.PaddingTop = UDim.new(0, 5)
+UIPadding.PaddingLeft = UDim.new(0, 5)
+UIPadding.PaddingRight = UDim.new(0, 5)
+UIPadding.Parent = Scroll
+
+--// ═══════════════ HELPERS ═══════════════
+local function createButton(text, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -10, 0, 42)
+    btn.BackgroundColor3 = Color3.fromRGB(35, 12, 50)
+    btn.BorderSizePixel = 0
+    btn.Text = text
+    btn.TextColor3 = Color3.fromRGB(255, 220, 240)
+    btn.TextSize = 15
+    btn.Font = Enum.Font.GothamSemibold
+    btn.AutoButtonColor = false
+    btn.Parent = Scroll
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = btn
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(255, 60, 120)
+    stroke.Thickness = 1
+    stroke.Transparency = 0.5
+    stroke.Parent = btn
+
+    btn.MouseEnter:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.15), {
+            BackgroundColor3 = Color3.fromRGB(60, 20, 85)
+        }):Play()
+        TweenService:Create(stroke, TweenInfo.new(0.15), {
+            Transparency = 0.1
+        }):Play()
+    end)
+
+    btn.MouseLeave:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.15), {
+            BackgroundColor3 = Color3.fromRGB(35, 12, 50)
+        }):Play()
+        TweenService:Create(stroke, TweenInfo.new(0.15), {
+            Transparency = 0.5
+        }):Play()
+    end)
+
+    btn.MouseButton1Click:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.1), {
+            BackgroundColor3 = Color3.fromRGB(100, 30, 130)
+        }):Play()
+        task.wait(0.1)
+        TweenService:Create(btn, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(35, 12, 50)
+        }):Play()
+        pcall(callback)
+    end)
+
+    return btn
+end
+
+local function createToggle(text, callback)
+    local state = false
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -10, 0, 42)
+    btn.BackgroundColor3 = Color3.fromRGB(35, 12, 50)
+    btn.BorderSizePixel = 0
+    btn.Text = ""
+    btn.AutoButtonColor = false
+    btn.Parent = Scroll
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = btn
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(255, 60, 120)
+    stroke.Thickness = 1
+    stroke.Transparency = 0.5
+    stroke.Parent = btn
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, -100, 1, 0)
+    label.Position = UDim2.new(0, 15, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = text
+    label.TextColor3 = Color3.fromRGB(255, 220, 240)
+    label.TextSize = 15
+    label.Font = Enum.Font.GothamSemibold
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = btn
+
+    local indicator = Instance.new("Frame")
+    indicator.Size = UDim2.new(0, 44, 0, 22)
+    indicator.Position = UDim2.new(1, -60, 0.5, -11)
+    indicator.BackgroundColor3 = Color3.fromRGB(60, 40, 70)
+    indicator.BorderSizePixel = 0
+    indicator.Parent = btn
+
+    local indCorner = Instance.new("UICorner")
+    indCorner.CornerRadius = UDim.new(1, 0)
+    indCorner.Parent = indicator
+
+    local dot = Instance.new("Frame")
+    dot.Size = UDim2.new(0, 16, 0, 16)
+    dot.Position = UDim2.new(0, 3, 0.5, -8)
+    dot.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+    dot.BorderSizePixel = 0
+    dot.Parent = indicator
+
+    local dotCorner = Instance.new("UICorner")
+    dotCorner.CornerRadius = UDim.new(1, 0)
+    dotCorner.Parent = dot
+
+    btn.MouseButton1Click:Connect(function()
+        state = not state
+        if state then
+            TweenService:Create(indicator, TweenInfo.new(0.2), {
+                BackgroundColor3 = Color3.fromRGB(255, 60, 120)
+            }):Play()
+            TweenService:Create(dot, TweenInfo.new(0.2), {
+                Position = UDim2.new(1, -19, 0.5, -8),
+                BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            }):Play()
+        else
+            TweenService:Create(indicator, TweenInfo.new(0.2), {
+                BackgroundColor3 = Color3.fromRGB(60, 40, 70)
+            }):Play()
+            TweenService:Create(dot, TweenInfo.new(0.2), {
+                Position = UDim2.new(0, 3, 0.5, -8),
+                BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+            }):Play()
+        end
+        pcall(callback, state)
+    end)
+
+    return btn
+end
+
+local function createSlider(text, min, max, default, callback)
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(1, -10, 0, 60)
+    frame.BackgroundColor3 = Color3.fromRGB(35, 12, 50)
+    frame.BorderSizePixel = 0
+    frame.Parent = Scroll
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = frame
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(255, 60, 120)
+    stroke.Thickness = 1
+    stroke.Transparency = 0.5
+    stroke.Parent = frame
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, -20, 0, 24)
+    label.Position = UDim2.new(0, 12, 0, 4)
+    label.BackgroundTransparency = 1
+    label.Text = text .. ": " .. default
+    label.TextColor3 = Color3.fromRGB(255, 220, 240)
+    label.TextSize = 14
+    label.Font = Enum.Font.GothamSemibold
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = frame
+
+    local bar = Instance.new("Frame")
+    bar.Size = UDim2.new(1, -24, 0, 6)
+    bar.Position = UDim2.new(0, 12, 1, -22)
+    bar.BackgroundColor3 = Color3.fromRGB(60, 30, 75)
+    bar.BorderSizePixel = 0
+    bar.Parent = frame
+
+    local barCorner = Instance.new("UICorner")
+    barCorner.CornerRadius = UDim.new(1, 0)
+    barCorner.Parent = bar
+
+    local fill = Instance.new("Frame")
+    fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
+    fill.BackgroundColor3 = Color3.fromRGB(255, 60, 120)
+    fill.BorderSizePixel = 0
+    fill.Parent = bar
+
+    local fillCorner = Instance.new("UICorner")
+    fillCorner.CornerRadius = UDim.new(1, 0)
+    fillCorner.Parent = fill
+
+    local dragging = false
+
+    local function setValue(input)
+        local pos = math.clamp((input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X, 0, 1)
+        local val = math.floor(min + (max - min) * pos + 0.5)
+        fill.Size = UDim2.new(pos, 0, 1, 0)
+        label.Text = text .. ": " .. val
+        callback(val)
+    end
+
+    bar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            setValue(input)
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            setValue(input)
+        end
+    end)
+
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end)
+
+    return frame
+end
+
+--// ═══════════════ FUNCTIONS ═══════════════
+
+--/// 1. ESP
+local espEnabled = false
+local espFolder = Instance.new("Folder")
+espFolder.Name = "ClownESP"
+espFolder.Parent = game.CoreGui
+
+local function createESP(player)
+    if player == LocalPlayer then return end
+    if espFolder:FindFirstChild(player.Name) then return end
+
+    local box = Instance.new("Frame")
+    box.Name = player.Name
+    box.BackgroundTransparency = 0.7
+    box.BackgroundColor3 = Color3.fromRGB(255, 60, 120)
+    box.BorderSizePixel = 0
+    box.Parent = espFolder
+
+    local boxStroke = Instance.new("UIStroke")
+    boxStroke.Color = Color3.fromRGB(255, 80, 140)
+    boxStroke.Thickness = 1.5
+    boxStroke.Parent = box
+
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.Size = UDim2.new(1, 0, 0, 16)
+    nameLabel.Position = UDim2.new(0, 0, 0, -18)
+    nameLabel.Text = player.Name
+    nameLabel.TextColor3 = Color3.fromRGB(255, 150, 200)
+    nameLabel.TextSize = 13
+    nameLabel.Font = Enum.Font.GothamBold
+    nameLabel.TextStrokeTransparency = 0.3
+    nameLabel.Parent = box
+
+    local distLabel = Instance.new("TextLabel")
+    distLabel.BackgroundTransparency = 1
+    distLabel.Size = UDim2.new(1, 0, 0, 14)
+    distLabel.Position = UDim2.new(0, 0, 1, 2)
+    distLabel.Text = ""
+    distLabel.TextColor3 = Color3.fromRGB(255, 200, 220)
+    distLabel.TextSize = 11
+    distLabel.Font = Enum.Font.Gotham
+    distLabel.TextStrokeTransparency = 0.3
+    distLabel.Parent = box
+
+    task.spawn(function()
+        while espEnabled and player.Parent and espFolder:FindFirstChild(player.Name) do
+            local char = player.Character
+            if char then
+                local hrp = char:FindFirstChild("HumanoidRootPart")
+                local humanoid = char:FindFirstChildOfClass("Humanoid")
+                if hrp and humanoid and humanoid.Health > 0 then
+                    local pos, onScreen = Camera:WorldToViewportPoint(hrp.Position)
+                    local headPos = Camera:WorldToViewportPoint(hrp.Position + Vector3.new(0, 2, 0))
+                    local footPos = Camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 3, 0))
+                    local height = math.abs(headPos.Y - footPos.Y)
+                    local width = height * 0.55
+
+                    if onScreen then
+                        box.Visible = true
+                        box.Size = UDim2.new(0, width, 0, height)
+                        box.Position = UDim2.new(0, pos.X - width/2, 0, pos.Y - height/2)
+                        local dist = (LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart"))
+                            and math.floor((LocalPlayer.Character.HumanoidRootPart.Position - hrp.Position).Magnitude) or 0
+                        distLabel.Text = tostring(dist) .. "m"
+                    else
+                        box.Visible = false
+                    end
+                else
+                    box.Visible = false
+                end
+            else
+                box.Visible = false
+            end
+            task.wait(0.05)
+        end
+        if box then box:Destroy() end
+    end)
+end
+
+local function toggleESP(state)
+    espEnabled = state
+    if state then
+        for _, p in ipairs(Players:GetPlayers()) do
+            createESP(p)
+        end
+        Players.PlayerAdded:Connect(function(p)
+            if espEnabled then
+                task.wait(1)
+                createESP(p)
+            end
+        end)
+    else
+        espFolder:ClearAllChildren()
+    end
+end
+
+--/// 2. Teleport ко всем игрокам по очереди
+local teleporting = false
+local function teleportToAll()
+    teleporting = not teleporting
+    if teleporting then
+        task.spawn(function()
+            while teleporting do
+                for _, p in ipairs(Players:GetPlayers()) do
+                    if not teleporting then break end
+                    if p ~= LocalPlayer and p.Character then
+                        local hrp = p.Character:FindFirstChild("HumanoidRootPart")
+                        if hrp and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                            LocalPlayer.Character.HumanoidRootPart.CFrame = hrp.CFrame * CFrame.new(0, 0, 3)
+                        end
+                    end
+                    task.wait(2)
+                end
+            end
+        end)
+    end
+end
+
+--/// 3. Fling всех
+local function flingAll()
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character then
+            local hrp = p.Character:FindFirstChild("HumanoidRootPart")
+            local humanoid = p.Character:FindFirstChildOfClass("Humanoid")
+            if hrp then
+                local bv = Instance.new("BodyAngularVelocity")
+                bv.AngularVelocity = Vector3.new(99999, 99999, 99999)
+                bv.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+                bv.Parent = hrp
+                if humanoid then
+                    humanoid.PlatformStand = true
+                end
+                task.delay(0.3, function()
+                    if bv then bv:Destroy() end
+                end)
+            end
+        end
+    end
+end
+
+--/// 4. Speed
+local speedConnection
+local currentSpeed = 16
+local function setSpeed(val)
+    currentSpeed = val
+    if speedConnection then speedConnection:Disconnect() end
+    speedConnection = RunService.Heartbeat:Connect(function()
+        local char = LocalPlayer.Character
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum.WalkSpeed = currentSpeed
+        end
+    end)
+end
+
+--/// 5. Fly
+local flying = false
+local flyConnection
+local flySpeed = 50
+local function toggleFly(state)
+    flying = state
+    local char = LocalPlayer.Character
+    if not char then return end
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+
+    if state then
+        local bg = Instance.new("BodyVelocity")
+        bg.Name = "ClownFly"
+        bg.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+        bg.Velocity = Vector3.zero
+        bg.Parent = hrp
+
+        local bg2 = Instance.new("BodyGyro")
+        bg2.Name = "ClownFlyGyro"
+        bg2.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+        bg2.P = 1000
+        bg2.D = 50
+        bg2.Parent = hrp
+
+        if flyConnection then flyConnection:Disconnect() end
+        flyConnection = RunService.RenderStepped:Connect(function()
+            if not flying or not hrp or not hrp.Parent then
+                if bg then bg:Destroy() end
+                if bg2 then bg2:Destroy() end
+                if flyConnection then flyConnection:Disconnect() end
+                return
+            end
+            local move = Vector3.zero
+            if UserInputService:IsKeyDown(Enum.KeyCode.W) then move += Camera.CFrame.LookVector end
+            if UserInputService:IsKeyDown(Enum.KeyCode.S) then move -= Camera.CFrame.LookVector end
+            if UserInputService:IsKeyDown(Enum.KeyCode.A) then move -= Camera.CFrame.RightVector end
+            if UserInputService:IsKeyDown(Enum.KeyCode.D) then move += Camera.CFrame.RightVector end
+            if UserInputService:IsKeyDown(Enum.KeyCode.Space) then move += Vector3.new(0, 1, 0) end
+            if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then move -= Vector3.new(0, 1, 0) end
+            if move.Magnitude > 0 then
+                bg.Velocity = move.Unit * flySpeed
+            else
+                bg.Velocity = Vector3.zero
+            end
+            bg2.CFrame = Camera.CFrame
+        end)
+    else
+        if hrp:FindFirstChild("ClownFly") then hrp.ClownFly:Destroy() end
+        if hrp:FindFirstChild("ClownFlyGyro") then hrp.ClownFlyGyro:Destroy() end
+        if flyConnection then flyConnection:Disconnect() end
+    end
+end
+
+--/// 6. Noclip
+local noclipEnabled = false
+local noclipConnection
+local function toggleNoclip(state)
+    noclipEnabled = state
+    if state then
+        if noclipConnection then noclipConnection:Disconnect() end
+        noclipConnection = RunService.Stepped:Connect(function()
+            if noclipEnabled and LocalPlayer.Character then
+                for _, v in ipairs(LocalPlayer.Character:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        v.CanCollide = false
+                    end
+                end
+            end
+        end)
+    else
+        if noclipConnection then noclipConnection:Disconnect() end
+    end
+end
+
+--/// 7. Invisible
+local invisible = false
+local function toggleInvisible(state)
+    invisible = state
+    local char = LocalPlayer.Character
+    if not char then return end
+    for _, v in ipairs(char:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.LocalTransparencyModifier = state and 1 or 0
+            if state then
+                v.Transparency = 1
+            else
+                v.Transparency = 0
+            end
+        elseif v:IsA("Decal") then
+            v.Transparency = state and 1 or 0
+        end
+    end
+end
+
+--/// 8. Infinite Jump
+local infJumpEnabled = false
+local function toggleInfJump(state)
+    infJumpEnabled = state
+end
+
+UserInputService.JumpRequest:Connect(function()
+    if infJumpEnabled then
+        local char = LocalPlayer.Character
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum:ChangeState(Enum.HumanoidStateType.Jumping)
+        end
+    end
+end)
+
+--// ═══════════════ UI ELEMENTS ═══════════════
+
+createToggle("👁 ESP всех игроков", function(state)
+    toggleESP(state)
+end)
+
+createButton("📡 Телепорт ко всем (2 сек)", function()
+    teleportToAll()
+end)
+
+createButton("💥 Fling всех игроков", function()
+    flingAll()
+end)
+
+createSlider("⚡ Скорость", 16, 300, 16, function(val)
+    setSpeed(val)
+end)
+
+createToggle("🕊 Полёт (WASD+Space/Ctrl)", function(state)
+    toggleFly(state)
+end)
+
+createToggle("🚪 Проход через стены", function(state)
+    toggleNoclip(state)
+end)
+
+createToggle("👻 Невидимость", function(state)
+    toggleInvisible(state)
+end)
+
+createToggle("🦘 Бесконечный прыжок", function(state)
+    toggleInfJump(state)
+end)
+
+createButton("🔄 Сбросить всё", function()
+    toggleESP(false)
+    toggleFly(false)
+    toggleNoclip(false)
+    toggleInvisible(false)
+    toggleInfJump(false)
+    setSpeed(16)
+    teleporting = false
+end)
+
+--// Обновляем размер канваса
+UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    Scroll.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 15)
+end)
+
+--// ═══════════════ DRAG ═══════════════
+local dragging = false
+local dragStart, startPos
+
+TopBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = Main.Position
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
+        Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+    end
+end)
+
+--// ═══════════════ OPEN / CLOSE ═══════════════
+local isOpen = true
+ToggleBtn.MouseButton1Click:Connect(function()
+    isOpen = not isOpen
+    if isOpen then
+        TweenService:Create(Main, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, 480, 0, 380)
+        }):Play()
+        TweenService:Create(Scroll, TweenInfo.new(0.35), {
+            Visible = true
+        }):Play()
+        ToggleBtn.Text = "▼"
+    else
+        TweenService:Create(Main, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, 480, 0, 55)
+        }):Play()
+        Scroll.Visible = false
+        ToggleBtn.Text = "▲"
+    end
+end)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 0, 0, 0),
+        Position = UDim2.new(Main.Position.X.Scale, Main.Position.X.Offset + 240, Main.Position.Y.Scale, Main.Position.Y.Offset + 190)
+    }):Play()
+    task.wait(0.3)
+    ScreenGui:Destroy()
+end)
+
+--// ═══════════════ NOTIFICATION ═══════════════
+local notif = Instance.new("TextLabel")
+notif.Size = UDim2.new(0, 300, 0, 40)
+notif.Position = UDim2.new(0.5, -150, 0, 20)
+notif.BackgroundColor3 = Color3.fromRGB(25, 8, 40)
+notif.BackgroundTransparency = 0.1
+notif.Text = "🎪 The Clown 2018 успешно загружен!"
+notif.TextColor3 = Color3.fromRGB(255, 100, 160)
+notif.TextSize = 16
+notif.Font = Enum.Font.GothamBold
+notif.Parent = ScreenGui
+
+local notifCorner = Instance.new("UICorner")
+notifCorner.CornerRadius = UDim.new(0, 10)
+notifCorner.Parent = notif
+
+local notifStroke = Instance.new("UIStroke")
+notifStroke.Color = Color3.fromRGB(255, 60, 120)
+notifStroke.Thickness = 1.5
+notifStroke.Parent = notif
+
+task.delay(3, function()
+    TweenService:Create(notif, TweenInfo.new(0.4), {
+        Position = UDim2.new(0.5, -150, 0, -60),
+        BackgroundTransparency = 1,
+        TextTransparency = 1
+    }):Play()
+    task.wait(0.5)
+    notif:Destroy()
+end)
